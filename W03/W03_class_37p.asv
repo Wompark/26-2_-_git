@@ -1,0 +1,46 @@
+%%작업공간 불러오기
+clear; close all; clc;
+
+load fisheriris;
+%%각종을 숫자로 표현 1: 버지칼라 2: 버지니카
+spcs2num = [];
+for k=1:1:length(species)
+    if strcmp(species(k), 'versicolor') == 1
+        spcs2num(k,1) = 1;
+    elseif strcmp(species(k), 'virginica') == 1
+        spcs2num(k,1) = 2;
+    end
+end
+
+%%학습데이터와 평가데이터 나누기 
+% 오늘은 두개의 그룹만 나눠봅시다 versicolor vs. virginica 
+% 오늘은 편의상 이렇게 나누겠음 
+% 1~50: setosa, 51~100: versicolor, 101~150: virginica 
+% 학습데이터. 71~100: versicolor, 121~150: virginica 총 60개 
+% 평가데이터. 51~70: versicolor, 101~120: virginica 총 40개
+
+% 일단 sepal len과 width (1,2열) 사용
+tr_id = [71:1:100 121:1:150];
+Training_data = meas(tr_id, 1:2);
+Training_label = spcs2num(tr_id,:);
+
+ts_id = [51:1:70 101:1:120];
+Test_data = meas(ts_id, 1:2);
+Test_label = spcs2num(ts_id,:);
+
+% 내장함수 이용 knn모델 만들기(학습:결정할거:k, 거리를 어떤 방법으로 할지)
+k = 3; %인접 이웃 3개 확인
+mdl = fitcknn(Training_data, Training_label, 'Nnumneighbors', k, 'Distance', 'euclidean');
+mdl = fi
+result = predict(mdl, Test_data(1,:))
+
+result = predict(mdl, Test_data)
+
+figure;
+subplot(211); bar(Test_label); axis tight;
+subplot(212); bar(result); axis tight;
+
+figure;
+subplot(311); bar(Test_label); axis tight;
+subplot(312); bar(result); axis tight;
+subplot(313); bar(Test_label - result); axis tight;
